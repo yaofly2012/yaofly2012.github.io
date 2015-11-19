@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>ReactJS</title>
+		<style type="text/css">
+			.wrapper {
+				border: 1px solid #ccc;
+			    padding: 10px;
+			    margin-bottom: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		 <div id="v_dom" class="wrapper">
+		 	<div id="v_dom_wrapper"></div>
+		 	<input type="button" id="v_dom_cycle" value="VDOM Cycle"/>
+		 </div>
+		 <div id="b_dom" class="wrapper">
+		 	<div id="b_dom_wrapper"><p>Hello, <input type="text" placeholder="Your name here"/>! It is -1</p></div>
+		 	<input type="button" id="b_dom_cycle" value="BDOM Cycle"/>
+		 </div>
+	</body>
+	<script type="text/javascript" src="src/js/react.js"></script>
+	<script type="text/javascript" src="src/js/react-dom.js"></script>
+	<script type="text/javascript">
+		(function(){
+			var ClickTimer = React.createClass({
+				displayName: 'ClickTimer',
+				getInitialState: function () {
+					return { date: -1 };
+				},
+				cycle: function () {
+					console.time('v_dom');
+					for (var i = 0; i != 100000; ++i) {
+						this.setState({ date: i });
+					}
+					console.timeEnd('v_dom');
+				},
+				render: function () {
+					return React.createElement(
+						'div',
+						{ id: 'v_dom_wrapper' },
+						React.createElement(
+							'p',
+							null,
+							'Hello, ',
+							React.createElement('input', { type: 'text', placeholder: 'Your name here' }),
+							'! It is ',
+							this.state.date
+						),
+						React.createElement('input', { type: 'button', value: 'VDOM Cycle', onClick: this.cycle })
+					);
+				}
+			});
+			ReactDOM.render(React.createElement(ClickTimer, null), document.getElementById('v_dom'));
+
+			// B DOM
+			document.getElementById('b_dom_cycle').addEventListener('click', function (e) {
+				var warpper = document.getElementById('b_dom_wrapper');
+				console.time('b_dom');
+				for (var i = 0; i !== 100000; ++i) {
+					warpper.innerHTML = '<p>Hello, <input type="text" placeholder="Your name here"/>! It is ' + i + '</p>';
+				}
+				console.timeEnd('b_dom');
+			});
+		})()
+	</script>
+</html>
