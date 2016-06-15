@@ -1,0 +1,151 @@
+<!DOCTYPE html >
+<html>
+  <head>
+  	<meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=9"/>
+    <style type="text/css">
+    	body, ul, li{
+    		padding: 0;
+    		margin: 0;
+    	}
+
+    	body{
+    		background: #666;
+    		height: 100%;
+    	}
+    	ul{
+    		list-style: none;
+    	}
+    	.header{
+    		height: 50px;
+    	}
+    	.wrapper{
+    		display: flex;
+    		flex-flow: row nowrap;
+    		align-items: stretch;
+    		height: 900px;
+    	}
+    	.l-tool{
+    		flex: 0 0 50px;
+    	}
+
+    	.l-tool>ul>li{
+    		line-height: 20px;
+    	}
+    	.l-tool>ul>li:hover{
+    		color: #fff;
+    	}
+
+    	.r-tool{
+    		flex: 0 0 100px;
+    	}
+
+    	.workspace{
+    		background: #ccc;
+    		flex: 1 1 100%;
+    	}
+    	.ws-bg{
+    		background: #fff;
+    	}
+    </style>
+    <script type="text/javascript">
+    </script>
+  </head>
+  <body>
+  <!-- Header menu -->
+  <div class="header"></div>
+  <div class="wrapper">
+  	<!-- Left tool -->
+  	<div class="l-tool">
+  		<ul>
+  			<li>Select</li>
+  			<li>Line</li>
+  			<li>Polyline</li>
+  			<li>Rect</li>
+  			<li>Polygon</li>
+  			<li>Ellipse</li>
+  			<li>Path</li>
+  		</ul>
+  	</div>
+  	<!-- Workspace -->
+  	<div class="workspace">
+  		<svg id="ws-bg" class="ws-bg" width="600" height="400"></svg>
+  	</div>
+  	<!-- Right tool -->
+  	<div class="r-tool"></div>
+  </div>
+  <div></div>
+  <script type="text/javascript">
+	var xmlns = "http://www.w3.org/2000/svg";
+  	function createDF(){
+  		return document.createDocumentFragment();
+  	}
+  	function createSvg(id){
+  		
+  		var svg = document.createElementNS(xmlns, 'svg');
+  		svg.id=id;
+  		return svg;
+  	}
+
+  	function _drawLine(x1, y1, x2, y2, color){
+  		var line = document.createElementNS(xmlns, 'line');
+  		line.setAttributeNS(null, 'x1', x1);
+  		line.setAttributeNS(null, 'y1', y1);
+  		line.setAttributeNS(null, 'x2', x2);
+  		line.setAttributeNS(null, 'y2', y2);
+  		line.setAttributeNS(null, 'stroke', color)
+  		line.setAttributeNS(null, 'fill', color)
+  		return line;
+  	}
+
+  	function Line(wrapper, startPoint){
+  		this.wrapper = wrapper;
+  		this.startPoint = startPoint;
+  		this.$line = _drawLine(startPoint.x, startPoint.y, startPoint.x, startPoint.y, "black");
+  		wrapper.appendChild(this.$line);
+  	}
+	Line.prototype.destroy = function(){}
+
+  	Line.prototype.move = function(endPoint){
+  		this.$line.setAttributeNS(null, 'x2', endPoint.x);
+  		this.$line.setAttributeNS(null, 'y2', endPoint.y);
+  	}
+
+  	function DrawLine(wrapper){
+  		return function(startPoint, endPoint){
+	  		var line = _drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+
+	  	}
+  	}
+  	
+
+
+  	(function(){
+  		var isMouseDown = false;
+  		var startPoint = null;
+  		var workspace = document.getElementById('ws-bg');
+  		var wrapper = workspace;
+  		var line = null;
+  		workspace.addEventListener('mousedown', function(e){
+  			isMouseDown = true;
+  			startPoint = {
+  				x: e.offsetX,
+  				y: e.offsetY
+  			}
+  			line = new Line(wrapper, startPoint);
+  		})
+  		workspace.addEventListener('mouseup', function(e){
+			isMouseDown = false;
+  		})
+
+  		workspace.addEventListener('mousemove', function(e){
+			if(!isMouseDown) return;
+			line.move({
+  				x: e.offsetX,
+  				y: e.offsetY
+  			});
+  		})
+  	})()
+  </script>
+  </body>
+</html>
