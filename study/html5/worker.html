@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<title>Worker</title>
+	</head>
+	<body>
+		<div>
+			<p><label>计数：</label><span id="js_msg"></span></p>
+			<input type="button" id="js_start" value="Start"/>
+			<input type="button" id="js_pause" value="Pause"/>
+			<input type="button" id="js_clear" value="Clear"/>
+		</div>
+		<script type="text/javascript">
+			(function(){
+				if(window.Worker === undefined){
+					alert('No web Worker support');
+					return;
+				}
+				var worker = null;
+				var jsMsg = document.getElementById('js_msg');
+
+				// start
+				document.getElementById('js_start').addEventListener('click', function(){
+					// if(!worker){
+					// 	worker = new Worker('./worker.js');
+					// 	worker.addEventListener('message', function(e){
+					// 		jsMsg.innerHTML = e.data.count;
+					// 	});
+					// }
+					// worker.postMessage({op: 'start', count: +jsMsg.innerHTML});
+
+
+					var myWorker = new Worker("worker.js");
+					myWorker.onmessage = function (oEvent) {
+					  console.log("Worker said : " + oEvent.data);
+					};
+					myWorker.postMessage("ali");
+					console.log('before..')					
+				});
+
+				document.getElementById('js_pause').addEventListener('click', function(){
+					worker.postMessage({op: 'pause',count: +jsMsg.innerHTML});
+					//worker && worker.terminate();
+				})
+
+				document.getElementById('js_clear').addEventListener('click', function(){
+					//worker.postMessage({op: 'pause',count: +jsMsg.innerHTML});
+					worker && worker.terminate();
+					worker = null;
+					jsMsg.innerHTML = '' + 0;
+				})
+				
+			})()
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>SharedWorker PageA</title>
+	</head>
+	<body>
+		<input type="text" id="js_x">
+		<span>+</span>
+		<input type="text" id="js_y">
+		<span>=</span>
+		<span id="js_r"></span>
+		<br><br>
+		<input type="button" id="js_add" value="Add">
+		<script type="text/javascript">
+			(function(){
+				var sharedWorker = new SharedWorker('./shareworker.js');
+				// sharedWorker.port.addEventListener('message', function(e){
+				// 	document.getElementById('js_r').innerHTML = e.data.result;
+				// })
+
+				//sharedWorker.port.start();
+				sharedWorker.port.onmessage = function(e){
+					document.getElementById('js_r').innerHTML = e.data.result;
+				}
+				sharedWorker.onerror = function(e){
+
+				}
+				document.getElementById('js_add').addEventListener('click', function(e){
+					sharedWorker.port.postMessage({
+						x: +document.getElementById('js_x').innerHTML,
+						y: +document.getElementById('js_y').innerHTML
+					})
+				})
+			})()
+		</script>
+	</body>
+</html>

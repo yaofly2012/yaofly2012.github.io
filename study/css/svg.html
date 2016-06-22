@@ -3,6 +3,7 @@
   <head>
   	<meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=9"/>
+    <script type="text/javascript" src="svg.js"></script>
     <style type="text/css">
     	body, ul, li{
     		padding: 0;
@@ -47,24 +48,34 @@
     	.ws-bg{
     		background: #fff;
     	}
+    	.ws-bg>*:hover{
+    		stroke: red;
+    	}
+    	.cmd-active{
+    		color: #FFF;
+    	}
     </style>
     <script type="text/javascript">
     </script>
   </head>
   <body>
   <!-- Header menu -->
-  <div class="header"></div>
+  <div class="header">
+  	<ul>
+  		<li>Export</li>
+  	</ul>
+  </div>
   <div class="wrapper">
   	<!-- Left tool -->
   	<div class="l-tool">
-  		<ul>
-  			<li>Select</li>
-  			<li>Line</li>
-  			<li>Polyline</li>
-  			<li>Rect</li>
-  			<li>Polygon</li>
-  			<li>Ellipse</li>
-  			<li>Path</li>
+  		<ul id="js_cmd_panel">
+  			<li data-command="select">Select</li>
+  			<li data-command="line">Line</li>
+  			<li data-command="polyline">Polyline</li>
+  			<li data-command="rect">Rect</li>
+  			<li data-command="polygon">Polygon</li>
+  			<li data-command="ellipse">Ellipse</li>
+  			<li data-command="path">Path</li>
   		</ul>
   	</div>
   	<!-- Workspace -->
@@ -76,75 +87,25 @@
   </div>
   <div></div>
   <script type="text/javascript">
-	var xmlns = "http://www.w3.org/2000/svg";
-  	function createDF(){
-  		return document.createDocumentFragment();
-  	}
-  	function createSvg(id){
-  		
-  		var svg = document.createElementNS(xmlns, 'svg');
-  		svg.id=id;
-  		return svg;
-  	}
-
-  	function _drawLine(x1, y1, x2, y2, color){
-  		var line = document.createElementNS(xmlns, 'line');
-  		line.setAttributeNS(null, 'x1', x1);
-  		line.setAttributeNS(null, 'y1', y1);
-  		line.setAttributeNS(null, 'x2', x2);
-  		line.setAttributeNS(null, 'y2', y2);
-  		line.setAttributeNS(null, 'stroke', color)
-  		line.setAttributeNS(null, 'fill', color)
-  		return line;
-  	}
-
-  	function Line(wrapper, startPoint){
-  		this.wrapper = wrapper;
-  		this.startPoint = startPoint;
-  		this.$line = _drawLine(startPoint.x, startPoint.y, startPoint.x, startPoint.y, "black");
-  		wrapper.appendChild(this.$line);
-  	}
-	Line.prototype.destroy = function(){}
-
-  	Line.prototype.move = function(endPoint){
-  		this.$line.setAttributeNS(null, 'x2', endPoint.x);
-  		this.$line.setAttributeNS(null, 'y2', endPoint.y);
-  	}
-
-  	function DrawLine(wrapper){
-  		return function(startPoint, endPoint){
-	  		var line = _drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
-
-	  	}
-  	}
-  	
-
-
+	
   	(function(){
-  		var isMouseDown = false;
-  		var startPoint = null;
   		var workspace = document.getElementById('ws-bg');
   		var wrapper = workspace;
-  		var line = null;
-  		workspace.addEventListener('mousedown', function(e){
-  			isMouseDown = true;
-  			startPoint = {
-  				x: e.offsetX,
-  				y: e.offsetY
+  		var currCmdDom = null;
+  		var svgManager = new SvgManager(workspace);
+  		var cmdPanel = document.getElementById('js_cmd_panel');
+  		cmdPanel.addEventListener('click', function(e){
+  			if(currCmdDom === e.target){
+  				return;
   			}
-  			line = new Line(wrapper, startPoint);
-  		})
-  		workspace.addEventListener('mouseup', function(e){
-			isMouseDown = false;
-  		})
+  			currCmdDom && (currCmdDom.className = currCmdDom.className.replace('cmd-active', ''));
 
-  		workspace.addEventListener('mousemove', function(e){
-			if(!isMouseDown) return;
-			line.move({
-  				x: e.offsetX,
-  				y: e.offsetY
-  			});
-  		})
+  			currCmdDom = e.target;
+  			var cmd = currCmdDom.getAttribute('data-command');
+  			currCmdDom.className +=' cmd-active';
+  			svgManager.switch(cmd);
+  		});
+
   	})()
   </script>
   </body>
