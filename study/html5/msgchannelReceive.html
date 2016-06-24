@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Message Channel Page2</title>
+	</head>
+	<body>
+		<input type="button" id="js_close" value="Stop Receive">
+		<ul></ul>
+		<script type="text/javascript">
+			(function(){
+				var msgContainer = document.querySelector('ul');
+				var liStr = ['<li>',,'</li>'];
+				window.onmessage = function(e){
+					liStr[1] = e.data;
+					msgContainer.innerHTML += liStr.join('');
+				}
+
+				document.getElementById('js_close').addEventListener('click', function(){
+					window.close();
+				})
+			})()
+			
+		</script>
+	</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Simple MSG Channel</title>
+		<style type="text/css">
+			.flex{
+				display: flex;
+				flex-flow: row nowrap;
+			}
+			.flex-item{
+				flex: 1 1 50%;
+			}
+			.op{
+				margin-bottom: 15px;
+			}
+			input[type="button"]{
+				margin-left: 10px;
+			}
+			ul{
+				list-style: none;
+				padding: 0;
+				margin: 0;
+				border: 1px solid #ccc;
+			    box-shadow: 0 0 1px 1px #ddd;
+			    width: 80%;
+			    height: 400px;
+			    overflow-y: scroll;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="flex">
+			<div class="flex-item">
+				<h2>Port1</h2>
+				<div class="op">
+					<input type="text" id="js_p1_t"><input type="button" id="js_p1_s" value="Send">
+				</div>
+				<ul id="js_p1_msg" class="msg">					
+				</ul>
+			</div>
+			<div class="flex-item">
+				<h2>Port2</h2>
+				<div class="op">
+					<input type="text" id="js_p2_t">
+					<input type="button" id="js_p2_s" value="Send">
+					<input type="button" id="js_p2_start" value="Start">
+				</div>
+				<ul id="js_p2_msg" class="msg">					
+				</ul>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		function createLi(portName, msg){
+			var li = document.createElement('li');
+			li.innerHTML = "<label>" + portName + "</label>" + msg;
+			return li;
+		}
+		(function(){
+			var msgChannel = new MessageChannel();
+			var p1Send = document.getElementById('js_p1_s');
+			var p1Text = document.getElementById('js_p1_t');
+			var p1Msg = document.getElementById('js_p1_msg');
+			var p2Text = document.getElementById('js_p2_t');
+			var p2Send = document.getElementById('js_p2_s');
+			var p2Msg = document.getElementById('js_p2_msg');
+			var p2Start = document.getElementById('js_p2_start');
+
+			p1Send.addEventListener('click', function(){
+				var msg = p1Text.value;
+				msg && msgChannel.port1.postMessage(msg);
+			})
+			// 直接通过onmessage赋值添加事件处理程序
+			msgChannel.port1.onmessage = function(e){
+				p1Msg.appendChild(createLi("Port2:", e.data));
+			};
+
+			p2Send.addEventListener('click', function(){
+				var msg = p2Text.value;
+				msg && msgChannel.port2.postMessage(msg);
+			});
+			p2Start.addEventListener('click', function(){
+				msgChannel.port2.start();
+			})
+			// 通过addEventListener添加事件处理程序
+			msgChannel.port2.addEventListener('message', function(e){
+				p2Msg.appendChild(createLi("Port1:", e.data));
+			});
+		})()
+	</script>
+</html>

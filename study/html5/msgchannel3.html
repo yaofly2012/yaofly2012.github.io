@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Message Channel Page3</title>
+	</head>
+	<body>
+		<p></p>
+		<script type="text/javascript">
+			(function(){
+				var p = document.querySelector('p');
+				window.onmessage = function(e){
+					p.innerHTML = e.data;
+					e.ports && e.ports[0].postMessage('from Page2');
+					//window.postMessage('from Page2',"*");
+				}
+			})()
+			
+		</script>
+	</body>
+</html>

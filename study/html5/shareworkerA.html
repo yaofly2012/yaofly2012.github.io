@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
+		<meta http-equiv="Cache-control" content="no-cache">
 		<title>SharedWorker PageA</title>
 	</head>
 	<body>
@@ -12,25 +13,30 @@
 		<span id="js_r"></span>
 		<br><br>
 		<input type="button" id="js_add" value="Add">
+		<input type="button" id="js_start" value="Start">
 		<script type="text/javascript">
-			(function(){
-				var sharedWorker = new SharedWorker('./shareworker.js');
-				// sharedWorker.port.addEventListener('message', function(e){
-				// 	document.getElementById('js_r').innerHTML = e.data.result;
-				// })
 
-				//sharedWorker.port.start();
-				sharedWorker.port.onmessage = function(e){
+			(function(){
+				function messageHandle(e){
 					document.getElementById('js_r').innerHTML = e.data.result;
 				}
-				sharedWorker.onerror = function(e){
+				var sharedWorker = new SharedWorker('./shareworker.js');
 
-				}
+				//sharedWorker.port.onmessage =messageHandle;
+				sharedWorker.port.addEventListener('message', messageHandle);
+				//sharedWorker.port.start();
+
 				document.getElementById('js_add').addEventListener('click', function(e){
 					sharedWorker.port.postMessage({
-						x: +document.getElementById('js_x').innerHTML,
-						y: +document.getElementById('js_y').innerHTML
+						op: '+',
+						x: +document.getElementById('js_x').value,
+						y: +document.getElementById('js_y').value
 					})
+				});
+
+				// Start connect
+				document.getElementById('js_start').addEventListener('click', function(e){
+					sharedWorker.port.start();
 				})
 			})()
 		</script>
