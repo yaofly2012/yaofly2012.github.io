@@ -11,8 +11,7 @@
 				var p = document.querySelector('p');
 				window.onmessage = function(e){
 					p.innerHTML = e.data;
-					e.ports && e.ports[0].postMessage('from Page2');
-					//window.postMessage('from Page2',"*");
+					e.source.postMessage('from Page2');
 				}
 			})()
 			

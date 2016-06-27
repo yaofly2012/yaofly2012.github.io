@@ -80,8 +80,14 @@
 				var msg = p2Text.value;
 				msg && msgChannel.port2.postMessage(msg);
 			});
-			p2Start.addEventListener('click', function(){
-				msgChannel.port2.start();
+			p2Start.addEventListener('click', function(e){
+				if(e.target.value === 'Stop'){
+					e.target.value = "Start";
+					msgChannel.port2.close();
+				} else {
+					e.target.value = "Stop";
+					msgChannel.port2.start();
+				}				
 			})
 			// 通过addEventListener添加事件处理程序
 			msgChannel.port2.addEventListener('message', function(e){

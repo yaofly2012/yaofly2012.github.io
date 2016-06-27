@@ -5,42 +5,51 @@
 		<title>Message Channel</title>
 	</head>
 	<body>
-		<div><input type="button" id="js_s" value="SendMsg"></div>
-		<p></p>
 		<div>
-			<iframe src="./msgchannel2.html"></iframe>
+			<input type="button" id="js_s" value="SendMsgToIframe">
+			<input type="button" id="js_s_p2" value="SendMsgFromPort2">
 		</div>
 		<div>
-			<div><input type="button" id="js_p" value="Post Msg"></div>
-			<iframe id="js_i_receive" src="./msgchannelReceive.html"></iframe>
+			<h2>From Port2</h2>
+			<ul id="js_p2"></ul>
+		</div>
+		<div>
+			<h2>From IFrame Port2</h2>
+			<ul id="js_i_p2"></ul>
+		</div>
+		<div>
+			<h2>Iframe</h2>
+			<iframe src="./msgchanneliframe.html"></iframe>
 		</div>
 		<script type="text/javascript">
 			var channel = new MessageChannel();
 			var para = document.querySelector('p');
 			var ifr = document.querySelector('iframe');
 			var otherWin = ifr.contentWindow;
+			var liStr = ['<li>',,'</li>'];
+			var msgContainerP2 = document.getElementById('js_p2');
+			var msgContainerIframeP2 = document.getElementById('js_i_p2');
+			var arrayBuffer = new ArrayBuffer(8);
+			var isNeutered = false;
 
-			ifr.addEventListener('load', iframeLoaded, false);
-			function iframeLoaded(){
-				document.getElementById('js_s').addEventListener('click', function(){
-					otherWin.postMessage('hello from the main page!', '*');	
-				})
-				
+			document.getElementById('js_s').addEventListener('click', function(){
+				otherWin.postMessage('hello from the main page!', '*', isNeutered ? undefined : (isNeutered=true, [channel.port2]));	
+			})
+
+			document.getElementById('js_s_p2').addEventListener('click', function(){
+				channel.port2.postMessage('hi from port2');
+			})
+
+			window.onmessage = function(e){
+				liStr[1] = e.data;
+				msgContainerIframeP2.innerHTML += liStr.join('');
 			}
 
 			channel.port1.onmessage = handleMessage;
 			function handleMessage(e){
-				para.innerHTML = e.data;
+				liStr[1] = e.data;
+				msgContainerP2.innerHTML += liStr.join('');
 			}
-			// Demo 3
-			(function(){
-				var count =0;
-				var winReceive = document.getElementById('js_i_receive');
-				document.getElementById('js_p').addEventListener('click', function(){
-					winReceive.contentWindow.postMessage('Message ' + (++count), "http://localhost")
-				})
-			})()
-
 		</script>
 	</body>
 </html>
