@@ -5,6 +5,9 @@
 		<title>Message Channel</title>
 	</head>
 	<body>
+		<p>
+			首次进入页面点击【SendMsgFromPort2】按钮让port2发送消息，port1可以接收到。但是把port2转移到iframe中后，再点击【SendMsgFromPort2】不会发送信息了（即port2在原来的上下文中失效了）。
+		</p>
 		<div>
 			<input type="button" id="js_s" value="SendMsgToIframe">
 			<input type="button" id="js_s_p2" value="SendMsgFromPort2">
