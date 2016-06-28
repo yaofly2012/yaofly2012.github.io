@@ -12,11 +12,11 @@
 			(function(){
 				var msgContainer = document.querySelector('ul');
 				var liStr = ['<li>',,'</li>'];
-				window.onmessage = function(e){
+				window.addEventListener('message',function(e){
 					liStr[1] = e.data;
 					msgContainer.innerHTML += liStr.join('');
 					e.source.postMessage('hello from the iframe!', '*');
-				}
+				});
 
 			})()
 			

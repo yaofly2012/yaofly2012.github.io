@@ -36,7 +36,7 @@
 			var isNeutered = false;
 
 			document.getElementById('js_s').addEventListener('click', function(){
-				otherWin.postMessage('hello from the main page!', '*', isNeutered ? undefined : (isNeutered=true, [channel.port2]));	
+				otherWin.postMessage('hello from the main page!', 'abc', isNeutered ? undefined : (isNeutered=true, [channel.port2]));	
 			})
 
 			document.getElementById('js_s_p2').addEventListener('click', function(){

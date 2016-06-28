@@ -22,30 +22,13 @@
 
 				// start
 				document.getElementById('js_start').addEventListener('click', function(){
-					// if(!worker){
-					// 	worker = new Worker('./worker.js');
-					// 	worker.addEventListener('message', function(e){
-					// 		jsMsg.innerHTML = e.data.count;
-					// 	});
-					// }
-					// worker.postMessage({op: 'start', count: +jsMsg.innerHTML});
-
-
 					var myWorker = new Worker("worker.js");
-					myWorker.onmessage = function (oEvent) {
-					  console.log("Worker said : " + oEvent.data);
-					};
-					myWorker.postMessage("ali");
-					console.log('before..')					
+					myWorker.onmessage = function (e) {
+						jsMsg.innerHTML = e.data;
+					};			
 				});
-
-				document.getElementById('js_pause').addEventListener('click', function(){
-					worker.postMessage({op: 'pause',count: +jsMsg.innerHTML});
-					//worker && worker.terminate();
-				})
-
+				// clear
 				document.getElementById('js_clear').addEventListener('click', function(){
-					//worker.postMessage({op: 'pause',count: +jsMsg.innerHTML});
 					worker && worker.terminate();
 					worker = null;
 					jsMsg.innerHTML = '' + 0;
