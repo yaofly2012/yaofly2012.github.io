@@ -11,6 +11,32 @@
 			<input type="button" id="js_clear" value="Clear"/>
 		</div>
 		<script type="text/javascript">
+			// Demo1
+			// (function(){
+			// 	if(window.Worker === undefined){
+			// 		alert('No web Worker support');
+			// 		return;
+			// 	}
+			// 	var worker = null;
+			// 	var jsMsg = document.getElementById('js_msg');
+			// 	var msgChannel = new MessageChannel();
+			// 	// start
+			// 	document.getElementById('js_start').addEventListener('click', function(){
+			// 		worker = new Worker("worker.js");
+			// 		worker.postMessage('hi', [msgChannel.port2])
+			// 	});
+			// 	msgChannel.port1.onmessage = function(e){
+			// 		jsMsg.innerHTML = e.data;
+			// 	}
+			// 	// clear
+			// 	document.getElementById('js_clear').addEventListener('click', function(){
+			// 		worker && worker.terminate();
+			// 		worker = null;
+			// 		jsMsg.innerHTML = '' + 0;
+			// 	})
+				
+			// })()
+
 			(function(){
 				if(window.Worker === undefined){
 					alert('No web Worker support');
