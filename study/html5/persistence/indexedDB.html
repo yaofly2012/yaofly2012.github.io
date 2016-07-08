@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>IndexDB</title>
+		<style type="text/css">
+			ul{
+				list-style: none;
+				width: 300px;
+			}
+			ul, li{
+				padding: 0;
+				margin: 0;
+			}
+			#js_list li{
+				line-height: 30px;
+				position: relative;
+				padding: 0 10px;
+				border-bottom: 1px solid #ccc;
+			}
+			#js_list li span.js_del{
+				content: "Del";
+				position: absolute;
+				width: 30px;
+				right: 0;
+				top: 0;
+				color: red;
+				display: none;
+				cursor: pointer;
+			}
+			#js_list li:hover{
+				background: #ddd;
+			}
+			#js_list li:hover span.js_del{
+				display: inherit;
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+			<input type="text" id="js_v">
+			<button id="js_add">Add</button>
+			<ul id="js_list">				
+			</ul>
+		</div>
+		<script type="text/javascript">
+			(function(){
+				var dbName = "qyTest";
+				var DB_Version = 2;
+				var objectStoreName = "todoList";
+				var indexedDB = window.indexedDB || window.webkitIndexedDB;
+				function init(callback){
+					getDB(callback);
+				}
+				function getDB(success, error, onupgradeneeded){
+					var request = indexedDB.open(dbName, DB_Version);
+					request.onsuccess = function(event){
+						var db = event.target.result;
+						success && success(db);
+					}
+					request.onerror = function(event) {
+					  // 错误处理程序在这里。
+					  error && error(event);
+					};
+					request.onupgradeneeded = function(event) {
+					  var db = event.target.result;
+					  // 创建一个对象存储空间来持有有关我们客户的信息。
+					  // 我们将使用 "ssn" 作为我们的 key path 因为它保证是唯一的。
+					  db.createObjectStore(objectStoreName, { keyPath: "title" });
+					  onupgradeneeded && onupgradeneeded(db);
+					};
+				}
+				
+				function insert(obj, success){
+					getDB(function(db){
+						var request = db.transaction([objectStoreName], "readwrite").objectStore(objectStoreName).add(obj);
+						request.onsuccess = success;
+					});
+				}
+
+				function get(title, success){
+					getDB(function(db){
+						var request = db.transaction([objectStoreName]).objectStore(objectStoreName).get(title);
+						request.onsuccess = function(event){
+							success && success(event.result);
+						}
+					});
+				}
+				function deleteByTitle(title, success){
+					getDB(function(db){
+						var request = db.transaction([objectStoreName], "readwrite").objectStore(objectStoreName).delete(title);
+						request.onsuccess = function(event){
+							success && success();
+						}
+					});
+				}
+
+				function getAll(success){
+					var items = [];
+					getDB(function(db){
+						db.transaction([objectStoreName]).objectStore(objectStoreName).openCursor().onsuccess = function(event){
+							var cursor = event.target.result;
+							if(cursor){
+								items.push(cursor.value);
+								cursor.continue();
+							}else{
+								success && success(items);
+							}
+						};						
+					});
+				}
+				window.Persistence = {
+					init: init,
+					insert: insert,
+					get: get,
+					getAll: getAll,
+					deleteByTitle: deleteByTitle
+				};
+			// End G
+			})();
+
+			(function(){
+				function createLi(text){
+					var li = document.createElement('li');
+					var spanText = document.createElement('span');
+					var spanDel = document.createElement('span');
+					spanDel.className += 'js_del';
+					spanText.innerText = text;
+					spanDel.innerText = "Del";
+					li.appendChild(spanText);
+					li.appendChild(spanDel);
+					return li;
+				}
+				function initList(textList){
+					var df = document.createDocumentFragment();
+					textList.forEach(function(item){
+						df.appendChild(createLi(item.title));
+					});
+					document.getElementById('js_list').appendChild(df);
+				}
+				function updateList(text){
+					var ul = document.getElementById('js_list');
+					ul.appendChild(createLi(text));
+				}
+				window.Persistence.init(function(){
+					window.Persistence.getAll(function(result){
+						initList(result || []);
+					});
+				});
+				var valInput = document.getElementById('js_v');
+				document.getElementById('js_add').addEventListener('click', function(){
+					var val = valInput.value;
+					if(val){
+						Persistence.insert({title: val}, function(){
+							updateList(val);
+						});
+					}
+				});
+				document.getElementById('js_list').addEventListener('click', function(e){
+					var currentTarget = e.currentTarget;
+					if(e.target.className.indexOf('js_del') !== -1){
+						window.Persistence.deleteByTitle(e.target.parentNode.firstChild.innerText, function(){
+							currentTarget.removeChild(e.target.parentNode);
+						});
+					}
+				});
+			})()
+		</script>
+	</body>
+</html>
