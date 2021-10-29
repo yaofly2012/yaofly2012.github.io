@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charSet="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>URL</title>
+    <style type="text/css">
+      body,dl,dd {
+        margin: 0;
+      }
+      dd {
+        display: inline-block;
+      }
+      .content {
+        margin: 0 auto;
+        text-align: center;
+        padding: 32px 0 0 0;
+      }
+      .item {
+        position: relative;
+        font-size: 20px;
+      }
+      .href {
+        display: inline-block;
+      }
+      .suffix {
+        position: absolute;
+        left: 0;
+        right: 0;
+        width: 100%;
+        bottom: 0;
+        font-size: 14px;
+        line-height: 24px;  
+        color: #ffffff;
+        opacity: 0.7;
+        cursor: pointer;
+      }
+      .href>.suffix
+      {
+        transform: translateY(400%);
+        background: #218bff;
+      }   
+      .origin>.suffix
+      {
+        transform: translateY(300%);    
+        background: #cf222e;    
+      }    
+      .host>.suffix {
+        transform: translateY(200%);
+        background: #116329;
+      }
+      .path>.suffix
+      {
+        transform: translateY(200%);
+        background: #0a3069;
+      }
+      .protocol>.suffix,
+      .hostname>.suffix,
+      .port>.suffix,
+      .pathname>.suffix,
+      .search>.suffix,
+      .hash>.suffix
+      {
+        transform: translateY(100%);
+        background: #8250df;
+      }
+      .protocol>.suffix {
+        width: 110%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <!-- http://www.example.org:8888/foo/bar?name=john#bang -->
+      <dl class="item href" data="href">
+        <dd>
+          <dl class="item origin">
+            <dd class="item protocol">
+              <span>https:</span>
+              <span class="suffix">protocol</span>
+            </dd>
+            <dd class="item">//</dd>
+            <dd>
+              <dl class="item host">
+                <dd class="item hostname">
+                  <span>www.example.org</span>
+                  <span class="suffix">hostname</span>
+                </dd>
+                <dd class="item">:</dd>
+                <dd class="item port">
+                  <span>8888</span>
+                  <span class="suffix">port</span>
+                </dd>
+                <span class="suffix">host</span>
+              </dl>
+            </dd>
+            <span class="suffix">origin</span>            
+          </dl>
+        </dd>
+        <dd>
+          <dl class="item path" data="path">
+            <dd class="item pathname">
+              <span>/foo/bar</span>
+              <span class="suffix">pathname</span>
+            </dd>
+            <dd class="item search">
+              <span>?name=yaofly2012</span>
+              <span class="suffix">search</span>
+            </dd>
+            <span class="suffix">path</span>
+          </dl>
+        </dd>
+        <dd class="item hash">
+          <span>#bang</span>
+          <span class="suffix">hash</span>
+        </dd>
+        <span class="suffix">href</span>
+      </dl>
+    </div>
+    <script>
+      ;(function() {
+        Array.prototype.slice
+          .call(document.getElementsByClassName('suffix'))
+          .forEach(function($suffix) {
+            $suffix.addEventListener('mouseover', function(e) {
+              e.target.style.opacity = 1;
+              document.getElementsByClassName(e.target.innerText)[0].style.background = '#54aeff';
+            })
+            $suffix.addEventListener('mouseleave', function(e) {
+              e.target.style.opacity = 0.7;
+              document.getElementsByClassName(e.target.innerText)[0].style.background = 'none';
+            })
+          })        
+      })()
+    </script>
+  </body>
+</html>
